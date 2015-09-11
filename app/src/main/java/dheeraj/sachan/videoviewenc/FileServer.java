@@ -19,7 +19,7 @@ import dheeraj.sachan.videoviewenc.nanoHTTPServer.Status;
  */
 public class FileServer extends NanoHTTPD {
     private static final String TAG = FileServer.class.getSimpleName();
-    public static final int port = 10000;
+    public static final int port = 50000;
     private HttpFileServerService httpFileServerService;
     private String data;
     private static FileServer fileServer;
@@ -61,13 +61,6 @@ public class FileServer extends NanoHTTPD {
                           Map<String, String> header, Map<String, String> parameters,
                           Map<String, String> files) {
         //Toast.makeText(context,"got request = "+uri,Toast.LENGTH_LONG).show();
-        Log.e(TAG, "-------------------------------------------------------");
-        Log.e(TAG, "-------------------------------------------------------");
-        Log.e(TAG, "-------------------------------------------------------");
-        Log.e(TAG, "got request = " + uri, new NullPointerException());
-        Log.e(TAG, "-------------------------------------------------------");
-        Log.e(TAG, "-------------------------------------------------------");
-        Log.e(TAG, "-------------------------------------------------------");
         InputStream fis = null;
         try {
             fis = new FileInputStream(new File(data + File.separator + uri));

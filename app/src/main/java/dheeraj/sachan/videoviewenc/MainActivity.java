@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.MediaController;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.File;
@@ -23,13 +24,26 @@ public class MainActivity extends AppCompatActivity {
     private VideoView videoView;
     private Button button;
     private CustomReceiver customReceiver;
+    private MediaController mediaController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+/*        final Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable ex) {
+                Toast.makeText(MainActivity.this, "exception : " + (ex.getMessage() == null ? "null" : ex.getMessage()), Toast.LENGTH_LONG).show();
+                uncaughtExceptionHandler.uncaughtException(thread, ex);
+            }
+        });*/
+
         setContentView(R.layout.activity_main);
         videoView = (VideoView) findViewById(R.id.video_view);
-        videoView.setMediaController(new MediaController(MainActivity.this));
+        mediaController = new MediaController(MainActivity.this);
+        mediaController.setAnchorView(videoView);
+        mediaController.setMediaPlayer(videoView);
+        videoView.setMediaController(mediaController);
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -49,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };*/
-        customReceiver  =new CustomReceiver();
+        customReceiver = new CustomReceiver();
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,10 +87,18 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         protected void onPostExecute(Void aVoid) {
-                            videoView.setVideoURI(Uri.parse("http://127.0.0.1:" + FileServer.port + "/playlist.m3u8"));
+                            try {
+                            videoView.setVideoURI(Uri.parse("http://localhost:" + FileServer.port + "/playlist.m3u8"));
                             videoView.requestFocus();
+                            } catch (Exception e) {
+                                Log.e(TAG, "", e);
+                            } finally {
+                                videoView.requestFocus();
+                            }
                         }
                     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                 /*   videoView.setVideoURI(Uri.parse("http://playertest.longtailvideo.com/adaptive/oceans_aes/oceans_aes.m3u8"));
+                    videoView.requestFocus();*/
                 } catch (Exception e) {
                     Log.e("", "");
                 }
