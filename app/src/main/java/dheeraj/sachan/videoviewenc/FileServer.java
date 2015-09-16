@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.BindException;
 import java.util.Map;
 
 import dheeraj.sachan.videoviewenc.nanoHTTPServer.NanoHTTPD;
@@ -19,7 +20,7 @@ import dheeraj.sachan.videoviewenc.nanoHTTPServer.Status;
  */
 public class FileServer extends NanoHTTPD {
     private static final String TAG = FileServer.class.getSimpleName();
-    public static final int port = 50000;
+    public static int port = 50000;
     private HttpFileServerService httpFileServerService;
     private String data;
     private static FileServer fileServer;
@@ -90,13 +91,21 @@ public class FileServer extends NanoHTTPD {
         fileServer = new FileServer();
         fileServer.httpFileServerService = httpFileServerService;
         fileServer.data = data;
-        try {
-            fileServer.start();
-            Intent intent = new Intent();
-            intent.setAction("dheeraj.sachan");
-            httpFileServerService.sendBroadcast(intent);
-        } catch (Exception e) {
-            Log.e(TAG, "unable to start http server", e);
+        while (true) {
+            try {
+                fileServer.start();
+                Intent intent = new Intent();
+                intent.setAction("dheeraj.sachan");
+                httpFileServerService.sendBroadcast(intent);
+                break;
+            } catch (Exception e) {
+                Log.e(TAG, "unable to start http server", e);
+                if (e instanceof BindException) {
+                    port = port + 1;
+                } else {
+                    break;
+                }
+            }
         }
     }
 

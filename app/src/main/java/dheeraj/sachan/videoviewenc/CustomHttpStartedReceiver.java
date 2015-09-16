@@ -8,7 +8,7 @@ import android.util.Log;
 /**
  * Created by dheeraj on 10/9/15.
  */
-public class CustomReceiver extends BroadcastReceiver {
+public class CustomHttpStartedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String s = intent.getAction();

@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     private VideoView videoView;
     private Button button;
-    private CustomReceiver customReceiver;
     private MediaController mediaController;
 
     @Override
@@ -50,31 +49,19 @@ public class MainActivity extends AppCompatActivity {
                 videoView.start();
             }
         });
-
         button = (Button) findViewById(R.id.button);
-
-      /*  customReceiver = new CustomReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction() != null && intent.getAction().equals("dheeraj.sachan")) {
-                    synchronized (TAG) {
-                        TAG.notify();
-                    }
-                }
-            }
-        };*/
-        customReceiver = new CustomReceiver();
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    Intent intent = new Intent(MainActivity.this, HttpFileServerService.class);
-                    intent.putExtra("path", new File(Environment.getExternalStorageDirectory(), "Download" + File.separator + "dheeraj").getAbsolutePath());
-                    startService(intent);
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... params) {
+                            Intent intent = new Intent(MainActivity.this, HttpFileServerService.class);
+                            stopService(intent);
+                            intent.putExtra("path", new File(Environment.getExternalStorageDirectory(), "Download" + File.separator + "dheeraj").getAbsolutePath());
+                            startService(intent);
+
                             synchronized (TAG) {
                                 try {
                                     TAG.wait();
@@ -88,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         protected void onPostExecute(Void aVoid) {
                             try {
-                            videoView.setVideoURI(Uri.parse("http://localhost:" + FileServer.port + "/playlist.m3u8"));
-                            videoView.requestFocus();
+                                videoView.setVideoURI(Uri.parse("http://localhost:" + FileServer.port + "/playlist.m3u8"));
+                                videoView.requestFocus();
                             } catch (Exception e) {
                                 Log.e(TAG, "", e);
                             } finally {
