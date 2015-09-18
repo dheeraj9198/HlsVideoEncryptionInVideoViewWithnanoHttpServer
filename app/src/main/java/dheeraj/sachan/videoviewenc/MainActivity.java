@@ -18,6 +18,8 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
@@ -75,7 +77,10 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         protected void onPostExecute(Void aVoid) {
                             try {
+/*
                                 videoView.setVideoURI(Uri.parse("http://localhost:" + FileServer.port + "/playlist.m3u8"));
+*/
+                                videoView.setVideoURI(Uri.parse("http://localhost:" + FileServer.port + "/bideo.mp4"));
                                 videoView.requestFocus();
                             } catch (Exception e) {
                                 Log.e(TAG, "", e);
